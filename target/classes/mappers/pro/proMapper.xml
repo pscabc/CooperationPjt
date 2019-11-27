@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro">
+	<select id="recogMemberList" resultType="Member">
+		select member_id as memberId,
+			member_name as memberName,
+			company as company,
+			grade as grade
+		from member where recognition='0'
+	</select>
+	<update id="recogMember" parameterType="String">
+		update member set recognition = '1'
+		where member_id = #{memberId}
+	</update>
+	<select id="conMemberList" resultType="Member">
+		select member_id as memberId,
+			member_name as memberName,
+			company as company,
+			grade as grade,
+			activity as activity
+		from member where recognition='1'
+	</select>
+	<update id="conMember" parameterType="ConMember"> 
+		update member set 
+		<if test="activity == 1">
+			activity = '1'
+		</if> 
+		<if test="activity == 0">
+			activity = '0'
+		</if>
+		where member_id = #{memberId}
+	</update>
+	<update id="gradeUpdateMember" parameterType="GradeMember">
+		update member set
+			grade = #{grade}
+		where member_id = #{memberId}
+	</update>
+	<select id="selectCooperList" resultType="Cooper">
+		select cooper_no as cooperNo,
+			cooper_name as cooperName,
+			activity as activity
+		from cooper order by cooper_no desc
+	</select>
+	<delete id ="delteCooper" parameterType="int">
+		delete from cooper
+			where cooper_no = #{cooperNo}
+	</delete>
+	<update id="activityCooper" parameterType="ActivityCooper">
+		update cooper set
+			<if test="state == 1">
+				activity = '0'
+			</if>
+			<if test="state == 0">
+				activity = '1'
+			</if> 
+		where cooper_no = #{cooperNo}
+	</update>
+	<insert id="insertCooper" parameterType="String">
+		insert into cooper 
+			values(cooper_no_seq.nextval,#{cooperName},'1')
+	</insert>
+	
+	
+	
+</mapper>

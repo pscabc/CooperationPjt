@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace = "board">
+	<select id="boardCount"  resultType="int">
+		select count(*) from board
+	</select>
+	
+	<select id="boardList" parameterType="com.psc.board.model.vo.BoardRange" resultType="Board">
+ 		 <![CDATA[select board_no as boardNo,
+			board_title as boardTitle,
+			writer_name as writerName,
+			writer_id as writerId,
+			board_company as boardCompany,
+			charge_name as chargeName,
+			charge_id as chargeId,
+			board_state as boardState,
+			comment_count as commentCount,
+			filepath as filepath,
+			filename as filename 
+		from (select rownum as rnum,t.* from board t order by board_no desc)
+		where rnum between #{start} and #{end}
+		]]>
+	</select>
+	<insert id="insertBoard" parameterType="Board">
+		insert into board values(board_no_seq.nextval,
+						#{boardTitle},
+						#{boardContent},
+						#{writerName},
+						#{writerId},
+						#{boardCompany},
+						null,
+						null,
+						#{boardState},
+						0,
+						null,
+						null,
+						sysdate)
+	</insert>
+	
+	<select id="boardView" parameterType="int" resultType="Board">
+		select board_no as boardNo,
+			board_title as boardTitle,
+			board_content as boardContent,
+			writer_name as writerName,
+			writer_id as writerId,
+			board_company as boardCompany,
+			charge_name as chargeName,
+			charge_id as chargeId,
+			board_state as boardState,
+			comment_count as commentCount,
+			filepath as filepath,
+			filename as filename,
+			enroll_date as enrollDate
+		from board where board_no = #{boardNo}
+	</select>
+	<delete id="deleteBoard">
+		delete from board
+			where board_no = #{boardNo}
+	</delete>
+	<update id="updateBoard" parameterType="BoardUpdate">
+		update board set board_title = #{boardTitle},
+						board_content = #{boardContent}
+					where board_no = #{boardNo}
+	</update>
+	<update id="updateCommentCount" parameterType="int">
+		update board set comment_count = comment_count+1
+		where board_no = #{boardNo}
+	</update>
+	
+	<update id="minusCommentCount" parameterType="int">
+		update board set comment_count = comment_count-1
+		where board_no = #{boardNo}
+	</update>
+	<select id="chargeBoardList" resultType="Board">
+		select board_no as boardNo,
+			board_title as boardTitle,
+			charge_name as chargeName
+		from board
+		order by charge_name desc, board_no desc
+	</select>
+	<select id="boardOne" parameterType="int" resultType="Board">
+		select board_no as boardNo,
+			board_Title as boardTitle,
+			writer_name as writerName,
+			board_company as boardCompany,
+			board_content as boardContent,
+			charge_name as chargeName,
+			board_state as boardState
+		from board
+		where board_no = #{boardNo}
+	</select>
+	
+	<update id="updateChargeBoard" parameterType="ChargeBoard">
+		update board set 
+			charge_name = #{memberName},
+			charge_id = #{memberId}
+		where board_no = #{boardNo}
+	</update>
+	<update id="deleteChargeBoard" parameterType="int">
+		update board set
+			charge_name = null,
+			charge_id = null
+		where board_no = #{boardNo}
+	</update>
+	<update id="updateBoardState" parameterType="UpdateState">
+		update board set
+			board_state = #{boardState}
+		where board_no = #{boardNo}
+	</update>
+	<select id="supportBoardList" parameterType="String" resultType="Board">
+		select board_no as boardNo,
+			board_state as boardState,
+			enroll_date as enrollDate
+		from board
+		where charge_id = #{memberId}
+		order by decode(board_state,'피드백요청',1,'요청할당',2,'신규요청',3,'답변등록',4,5),enroll_date desc
+	</select>
+	<select id="myBoardList" parameterType="String" resultType="Board">
+		select 
+			
+		from board
+		where writer_id = memberId
+	</select>
+	<select id="completeQuestionList" parameterType="String" resultType="Board">
+		select board_title as boardTitle,
+			board_state as boardState,
+			enroll_date as enrollDate,
+			board_no as boardNo
+		from board
+		where writer_id = #{memberId} and board_state = '처리완료'
+	</select>
+	<select id="progressQuestionList" parameterType ="String" resultType="Board">
+		select board_title as boardTitle,
+			board_state as boardState,
+			enroll_date as enrollDate,
+			board_no as boardNo
+		from board
+		where writer_id = #{memberId}
+		and board_state != '처리완료'
+		order by decode(board_state,'답변등록',1,'피드백요청',2,'요청할당',3,'신규요청',4,5)
+	</select>
+	
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.psc.member.model.vo.Member" alias="Member"/>
+		<typeAlias type="com.psc.pro.model.vo.ConMember" alias="ConMember"/>
+		<typeAlias type="com.psc.pro.model.vo.GradeMember" alias="GradeMember"/>
+		<typeAlias type="com.psc.pro.model.vo.Cooper" alias="Cooper"/>
+		<typeAlias type="com.psc.pro.model.vo.ActivityCooper" alias="ActivityCooper"/>
+		<typeAlias type="com.psc.board.model.vo.Board" alias="Board"/>
+		<typeAlias type="com.psc.board.model.vo.BoardRange" alias="BoardRange"/>
+		<typeAlias type="com.psc.board.model.vo.BoardUpdate" alias="BoardUpdate"/>
+		<typeAlias type="com.psc.board.model.vo.UpdateState" alias="UpdateState"/>
+		<typeAlias type="com.psc.board.model.vo.ChargeBoard" alias="ChargeBoard"/>
+		<typeAlias type="com.psc.comment.model.vo.Comment" alias="Comment"/>
+		
+		
+		
+	</typeAliases>
+</configuration>

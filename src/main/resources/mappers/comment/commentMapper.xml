@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="comment">
+	<insert id="insertComment" parameterType="Comment">
+		insert into reply values(
+			#{boardNo},
+			reply_no_seq.nextval,
+			#{writerName},
+			#{writerId},
+			#{commentContent},
+			0,
+			sysdate,
+			#{grade},
+			#{company})
+	</insert>
+	<select id="commentList" parameterType="int" resultType="Comment">
+		select r.board_no as boardNo,
+			comment_no as commentNo,
+			r.writer_name as writerName,
+			r.writer_id as writerId,
+			m.grade as grade,
+			m.company as company,
+			comment_content as commentContent,
+			comment_like as commentLike,
+			comment_date as commentDate
+		from reply r,board b,member m 
+		where r.board_no = b.board_no
+			and m.member_id = r.writer_id  
+			and b.board_no = #{boardNo}
+			order by comment_like desc, comment_date
+	</select>
+	<delete id="deleteComment" parameterType="int">
+		delete from reply
+			where comment_no = #{commentNo}
+	</delete>
+	<update id="updateComment" parameterType="Comment">
+		update reply set comment_content = #{commentContent}
+						where comment_no = #{commentNo}	
+	</update>
+	<update id="CommentLike" parameterType="int">
+		update reply set comment_like = 1
+			where comment_no = #{commentNo}
+	</update>
+	<update id="CommentLikeCancel" parameterType="int">
+		update reply set comment_like = 0
+			where comment_no = #{commentNo}
+	</update>
+</mapper>

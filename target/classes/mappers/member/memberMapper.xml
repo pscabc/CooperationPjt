@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="member">
+	<select id="selectOneMember" parameterType="Member" resultType="Member">
+		select member_id as memberId,
+			member_pw as memberPw,
+			member_name as memberName,
+			phone as phone,
+			company as company,
+			activity as activity,
+			recognition as recognition,
+			grade as grade
+		from member where member_id=#{memberId} 
+		<if test="memberPw != null">
+			and member_pw=#{memberPw}
+		</if>
+	</select>
+	<select id="checkId" parameterType="string" resultType="Member">
+		select member_id as memberId
+		from member where member_id = #{memberId}
+	</select>
+	<select id="cooperList" resultType="String">
+		select cooper_name
+		from cooper where activity = '1'
+	</select>
+	<insert id="insertMember" parameterType="Member">
+		insert into member values(member_no_seq.nextval,
+			#{memberId},
+			#{memberPw},
+			#{memberName},
+			#{phone},
+			<if test="grade == '제조사직원'">
+				'KH정보교육원',
+			</if>
+			<if test="grade == '협력사직원'">
+				#{company},
+			</if>
+			#{activity},
+			#{recognition},
+			#{grade},
+			sysdate)
+	</insert>
+	<select	id="manufacturerList" resultType="Member">
+		select member_name as memberName,
+			member_id as memberId
+		from member
+		where grade='제조사직원'
+	</select>
+</mapper>
